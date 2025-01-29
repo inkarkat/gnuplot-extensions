@@ -131,7 +131,11 @@ case "$outputExtension" in
     *)		printf >&2 "ERROR: Unsupported output format '%s'.\\n" "$outputExtension"; exit 2;;
 esac
 
+# Handle recursive invocation where our gnuplot wrapper is already in the PATH.
+PATH="${PATH/#"$libDir":/}"
+PATH="${PATH//:"$libDir":/:}"
 WITHGNUPLOTOUTPUT_GNUPLOT_COMMAND="$(which gnuplot)" || exit 3
+
 export WITHGNUPLOTOUTPUT_TERMINAL_SETTINGS="set terminal ${terminalSettings:?}" \
     WITHGNUPLOTOUTPUT_GNUPLOT_COMMAND \
     PATH="${libDir}:${PATH}"
