@@ -16,7 +16,7 @@ printShortUsage()
 {
     # Note: short followed by long option; if the user knows the short one, she can
     # skim the long one.
-    printf 'Usage: %q %s\n' "$(basename "$1")" "\"\"|FILE.(png,svg)|dumb|term|gui|fullscreen [-f|--fullscreen] -s|--size WIDTHxHEIGHT|WIDTH,HEIGHT] -c|--command \"COMMANDLINE\" [-c ...] | --exec SIMPLECOMMAND [...] ${WITHGNUPLOTOUTPUT_EXEC_END} [--exec ...] | [--] SIMPLECOMMAND [...] [-?|-h|--help]"
+    printf 'Usage: %q %s\n' "$(basename "$1")" "\"\"|FILE.(png,svg)|dumb|term|gui|fullscreen [-f|--fullscreen|-s|--size WIDTHxHEIGHT|WIDTH,HEIGHT] -c|--command \"COMMANDLINE\" [-c ...] | --exec SIMPLECOMMAND [...] ${WITHGNUPLOTOUTPUT_EXEC_END} [--exec ...] | [--] SIMPLECOMMAND [...] [-?|-h|--help]"
 }
 printUsage()
 {
@@ -30,8 +30,9 @@ printLongUsage()
     # This is the long "man page" when launched with the help argument.
     # It is printed to stdout to allow paging with 'more'.
     cat <<HELPDESCRIPTION
-Execute COMMAND while every gnuplot invocation is modified to output to FILE
-instead of the default terminal.
+Execute COMMAND (either gnuplot itself or an executable invoking gnuplot) while
+every gnuplot invocation is modified to output to FILE / as characters / with
+the GUI viewer instead of the default Gnuplot terminal.
 HELPDESCRIPTION
     echo
     printShortUsage "$1"
