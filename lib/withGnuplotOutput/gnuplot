@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ -z "$WITHGNUPLOTOUTPUT_GNUPLOT_COMMAND" -o -z "$WITHGNUPLOTOUTPUT_TERMINAL_SETTINGS" ]; then
+    echo >&2 'ERROR: This script must be called from within withGnuplotOutput.'
+    exit 2
+fi
+
+exec "$WITHGNUPLOTOUTPUT_GNUPLOT_COMMAND" -e "$WITHGNUPLOTOUTPUT_TERMINAL_SETTINGS" "$@"
