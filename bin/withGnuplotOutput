@@ -16,7 +16,7 @@ printShortUsage()
 {
     # Note: short followed by long option; if the user knows the short one, she can
     # skim the long one.
-    printf 'Usage: %q %s\n' "$(basename "$1")" "\"\"|FILE.(png,svg)|dumb|term|gui|fullscreen [-o|--open] [-v|--verbose] [-f|--fullscreen|-s|--size WIDTHxHEIGHT|WIDTH,HEIGHT] -c|--command \"COMMANDLINE\" [-c ...] | --exec SIMPLECOMMAND [...] ${WITHGNUPLOTOUTPUT_EXEC_END} [--exec ...] | [--] SIMPLECOMMAND [...] [-?|-h|--help]"
+    printf 'Usage: [DEBUG=withGnuplotOutput[!]] %q %s\n' "$(basename "$1")" "\"\"|FILE.(png,svg)|dumb|term|gui|fullscreen [-o|--open] [-v|--verbose] [-f|--fullscreen|-s|--size WIDTHxHEIGHT|WIDTH,HEIGHT] -c|--command \"COMMANDLINE\" [-c ...] | --exec SIMPLECOMMAND [...] ${WITHGNUPLOTOUTPUT_EXEC_END} [--exec ...] | [--] SIMPLECOMMAND [...] [-?|-h|--help]"
 }
 printUsage()
 {
