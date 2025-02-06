@@ -16,7 +16,7 @@ printShortUsage()
 {
     # Note: short followed by long option; if the user knows the short one, she can
     # skim the long one.
-    printf 'Usage: %q %s\n' "$(basename "$1")" "\"\"|FILE.(png,svg)|dumb|term|gui|fullscreen [-f|--fullscreen|-s|--size WIDTHxHEIGHT|WIDTH,HEIGHT] -c|--command \"COMMANDLINE\" [-c ...] | --exec SIMPLECOMMAND [...] ${WITHGNUPLOTOUTPUT_EXEC_END} [--exec ...] | [--] SIMPLECOMMAND [...] [-?|-h|--help]"
+    printf 'Usage: %q %s\n' "$(basename "$1")" "\"\"|FILE.(png,svg)|dumb|term|gui|fullscreen [-v|--verbose] [-f|--fullscreen|-s|--size WIDTHxHEIGHT|WIDTH,HEIGHT] -c|--command \"COMMANDLINE\" [-c ...] | --exec SIMPLECOMMAND [...] ${WITHGNUPLOTOUTPUT_EXEC_END} [--exec ...] | [--] SIMPLECOMMAND [...] [-?|-h|--help]"
 }
 printUsage()
 {
@@ -38,6 +38,8 @@ HELPDESCRIPTION
     printShortUsage "$1"
     echo
     cat <<HELPTEXT
+    --verbose|-v	Print the (full absolute) filespec of the output FILE
+			(only when successful and graphing into a file).
     fullscreen|--fullscreen|-f
 			Use the (primary) display's resolution as the size.
     --size|-s WIDTHxHEIGHT|WIDTH,HEIGHT
@@ -66,12 +68,14 @@ case "$1" in
 esac
 output="${1?}"; shift
 
+isVerbose=
 size=
 commands=
 while [ $# -ne 0 ]
 do
     case "$1" in
 	--help|-h|-\?)	shift; printLongUsage "$0"; exit 0;;
+	--verbose|-v)	shift; isVerbose=t;;
 	--size|-s)	shift; size="${1:?}"; shift;;
 	--fullscreen|-f)
 			shift; size="$(DISPLAYRESOLUTION_SEPARATOR=',' displayresolution --primary)";;
@@ -123,9 +127,15 @@ outputDependentSize="${!outputDependentSizeVarName}"
 size="${size:-${outputDependentSize:-$WITHGNUPLOTOUTPUT_GRAPH_SIZE}}"
 size="${size/x/,}"
 
+setVerboseFile()
+{
+    [ "$isVerbose" ] || return 0
+    WITHGNUPLOTOUTPUT_OUTPUTFILE="$(realpath --no-symlinks -- "$output")" || WITHGNUPLOTOUTPUT_OUTPUTFILE="$output"
+}
+
 case "$outputExtension" in
-    png)	terminalSettings="png${size:+ size }${size}; set output '$output'";;
-    svg)	terminalSettings="svg${size:+ size }${size} background 'white'; set output '$output'";;
+    png)	terminalSettings="png${size:+ size }${size}; set output '$output'"; setVerboseFile;;
+    svg)	terminalSettings="svg${size:+ size }${size} background 'white'; set output '$output'"; setVerboseFile;;
     dumb|term)	terminalSettings="${WITHGNUPLOTOUTPUT_GRAPH_NOGUI}${size:+ size }${size}";;
     gui)	terminalSettings="${WITHGNUPLOTOUTPUT_GRAPH_GUI}${size:+ size }${size}";;
     *)		printf >&2 "ERROR: Unsupported output format '%s'.\\n" "$outputExtension"; exit 2;;
@@ -138,6 +148,7 @@ WITHGNUPLOTOUTPUT_GNUPLOT_COMMAND="$(which gnuplot)" || exit 3
 
 export WITHGNUPLOTOUTPUT_TERMINAL_SETTINGS="set terminal ${terminalSettings:?}" \
     WITHGNUPLOTOUTPUT_GNUPLOT_COMMAND \
+    WITHGNUPLOTOUTPUT_OUTPUTFILE \
     PATH="${libDir}:${PATH}"
 
 eval "$commands"
